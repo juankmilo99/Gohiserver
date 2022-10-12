@@ -4,7 +4,7 @@ exports.default = {
     database: {
         dialec: 'postgres',
         host: 'localhost',
-        user: 'postgres',
+        user: 'Camilo_R',
         password: 'juan1233',
         database: 'encuestadb'
     }
