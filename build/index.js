@@ -4,13 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const encuestaDimRoutes_1 = __importDefault(require("./routes/encuestaDimRoutes"));
+const encuestasRoutes_1 = __importDefault(require("./routes/encuestasRoutes"));
 const indexRoutes_1 = __importDefault(require("./routes/indexRoutes"));
 const preguntaRoutes_1 = __importDefault(require("./routes/preguntaRoutes"));
 const usuarioRoutes_1 = __importDefault(require("./routes/usuarioRoutes"));
 const cors_1 = __importDefault(require("cors"));
 const respuestaRoutes_1 = __importDefault(require("./routes/respuestaRoutes"));
 const usuarioEncuestaRoutes_1 = __importDefault(require("./routes/usuarioEncuestaRoutes"));
+const procesosRoutes_1 = __importDefault(require("./routes/procesosRoutes"));
+const dimensionesRoutes_1 = __importDefault(require("./routes/dimensionesRoutes"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -25,11 +27,13 @@ class Server {
     }
     routes() {
         this.app.use('/', indexRoutes_1.default);
-        this.app.use('/api/public/encuestaDimencion', encuestaDimRoutes_1.default);
+        this.app.use('/api/public/encuestas', encuestasRoutes_1.default);
         this.app.use('/api/public/usuarioEncuesta', usuarioEncuestaRoutes_1.default);
         this.app.use('/api/public/pregunta', preguntaRoutes_1.default);
         this.app.use('/api/public/respuesta', respuestaRoutes_1.default);
-        this.app.use('/api/public/usuario', usuarioRoutes_1.default);
+        this.app.use('/api/public/usuarios', usuarioRoutes_1.default);
+        this.app.use('/api/public/procesos', procesosRoutes_1.default);
+        this.app.use('/api/public/dimensiones', dimensionesRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('PORT'), () => {

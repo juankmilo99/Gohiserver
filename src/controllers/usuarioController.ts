@@ -4,7 +4,7 @@ import dbManager from '../config/db_manager';
 class UsuarioController extends dbManager {
 
   public obtenerUsuarios(req: Request, res: Response): Promise<any> {
-    const sql:string = "SELECT usuarioid ,nombreusuario, correo, clave, codrol FROM tblusuario";
+    const sql:string = "SELECT * FROM public.tbl_usuarios ORDER BY codigo desc ";
     return UsuarioController.ejecutarConsulta(sql, [], res, 'select');
   }
 
@@ -13,7 +13,7 @@ class UsuarioController extends dbManager {
     const parametros=[];
     const {correo,clave}=req.body;
     parametros.push(correo,clave);
-    const sql:string = "SELECT usuarioid, nombreusuario, correo, codrol FROM tblusuario WHERE correo = $1 AND clave = $2";
+    const sql:string = "SELECT * FROM tbl_usuarios WHERE correo = $1 AND clave = $2";
     console.log(parametros);
     return UsuarioController.ejecutarConsulta(sql, parametros, res, 'jwt');
   }
@@ -21,11 +21,11 @@ class UsuarioController extends dbManager {
   public crearUsuarios(req: Request, res: Response): Promise<any>{
     console.log(req.body);
     const parametros=[];
-    const {nombreusuario,correo,clave,codrol}=req.body;
-    parametros.push(nombreusuario,correo,clave,codrol);
-    const sql: string = "INSERT into tblusuario (nombreusuario,correo,clave,codrol) VALUES($1,$2,$3,$4) RETURNING codrol , correo, nombreusuario ";
+    const {codigo_rol, nombre_usuario, correo, clave}=req.body;
+    parametros.push(codigo_rol, nombre_usuario, correo, clave);
+    const sql: string = "INSERT into tbl_usuarios (codigo_rol, nombre_usuario, correo, clave) VALUES($1,$2,$3,$4) RETURNING codigo";
     console.log(parametros);
-    return UsuarioController.ejecutarConsulta(sql,parametros,res,'jwt')
+    return UsuarioController.ejecutarConsulta(sql,parametros,res,'insert')
   }
 
   public borrarUsuarios(req: Request, res: Response): Promise<any> {

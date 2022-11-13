@@ -3,24 +3,33 @@ import dbManager from '../config/db_manager';
 
 class PreguntaController extends dbManager {
 
-  public obtenerPregunta(req: Request, res: Response): Promise<any> {
-    const sql:string = "SELECT tblpreg.preguntaid,dim.nombredimencion,tblpreg.pregunta,tblpreg.encuestadimencionid  FROM tblpregunta tblpreg INNER join tblencuestadimencion dim ON dim.encuestadimencionid = tblpreg.encuestadimencionid ORDER BY  tblpreg.preguntaid desc";
+  public obtenerPreguntas(req: Request, res: Response): Promise<any> {
+    const sql:string = "SELECT * FROM public.tbl_encuestas_preguntas   ORDER BY codigo desc ";
     return PreguntaController.ejecutarConsulta(sql, [], res, 'select');
-  }
+  }  
   
-  public crearPregunta(req: Request, res: Response): Promise<any>{
-    console.log(req.body);
-    const parametros=[];
-    const {encuestadimencionid,pregunta}=req.body;
-    parametros.push(encuestadimencionid,pregunta);
-    const sql: string = "INSERT into tblpregunta (encuestadimencionid,pregunta) VALUES($1,$2) RETURNING preguntaid";
-    return PreguntaController.ejecutarConsulta(sql,parametros,res,'insert')
+  public crearPreguntas(req: Request, res: Response): Promise<any>{
+    let sql: string = '';
+    const promises: Array<Promise<any>> = [];
+    const preguntas = req.body;
+
+    preguntas.forEach((infoPregunta:any) => {
+      const {codigo_encuesta, codigo_dimension, pregunta}=infoPregunta;
+      const parametros : any[] = [];
+      parametros.push(codigo_encuesta, codigo_dimension, pregunta);
+      sql = `INSERT into tbl_encuestas_preguntas (codigo_encuesta, codigo_dimension, pregunta) VALUES($1,$2,$3) RETURNING codigo`;
+      promises.push(PreguntaController.ejecutarConsulta(sql,parametros,res,'insert-multiple'));
+    });                                
+    res.status(200).json({                      
+      'mensaje': 'Registro creado'      
+    });                                   
+    return Promise.all(promises);
   }
 
   public borrarPregunta(req: Request, res: Response): Promise<any> {
-    if (!isNaN(Number(req.params.preguntaid))) {
-      const codigo = Number(req.params.preguntaid);
-      const sql : string = 'DELETE FROM tblpregunta WHERE preguntaid = $1';
+    if (!isNaN(Number(req.params.codigo_encuesta))) {
+      const codigo = Number(req.params.codigo_encuesta);
+      const sql : string = 'DELETE FROM tbl_encuestas_preguntas WHERE codigo = $1';
       const parametros=[codigo];
       return PreguntaController.ejecutarConsulta(sql, parametros, res, 'delete');
     } else {

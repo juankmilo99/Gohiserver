@@ -1,12 +1,13 @@
 import express from 'express';
-import encuestaDimRoutes from './routes/encuestaDimRoutes';
+import encuestasRoutes from './routes/encuestasRoutes';
 import indexRoutes from './routes/indexRoutes';
 import preguntaRoutes from './routes/preguntaRoutes';
 import usuarioRoutes from './routes/usuarioRoutes';
 import cors from "cors";
 import respuestaRoutes from './routes/respuestaRoutes';
-import encuestaRelUsuarioRoutes from './routes/usuarioEncuestaRoutes';
 import usuarioEncuestaRoutes from './routes/usuarioEncuestaRoutes';
+import procesosRoutes from './routes/procesosRoutes';
+import dimensionesRoutes from './routes/dimensionesRoutes';
 
 class Server {
     public app: express.Application;
@@ -28,11 +29,13 @@ class Server {
 
     public routes(): void {
         this.app.use('/',indexRoutes);
-        this.app.use('/api/public/encuestaDimencion',encuestaDimRoutes);
+        this.app.use('/api/public/encuestas',encuestasRoutes);
         this.app.use('/api/public/usuarioEncuesta',usuarioEncuestaRoutes);
         this.app.use('/api/public/pregunta',preguntaRoutes);
         this.app.use('/api/public/respuesta',respuestaRoutes);       
-        this.app.use('/api/public/usuario',usuarioRoutes);
+        this.app.use('/api/public/usuarios',usuarioRoutes);
+        this.app.use('/api/public/procesos',procesosRoutes);
+        this.app.use('/api/public/dimensiones',dimensionesRoutes);
       }
 
     public start(): void {

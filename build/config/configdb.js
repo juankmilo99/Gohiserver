@@ -6,6 +6,6 @@ exports.default = {
         host: 'localhost',
         user: 'Camilo_R',
         password: 'juan1233',
-        database: 'encuestadb'
+        database: 'db_encuestas'
     }
 };

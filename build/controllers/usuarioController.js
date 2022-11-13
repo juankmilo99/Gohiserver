@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const db_manager_1 = __importDefault(require("../config/db_manager"));
 class UsuarioController extends db_manager_1.default {
     obtenerUsuarios(req, res) {
-        const sql = "SELECT usuarioid ,nombreusuario, correo, clave, codrol FROM tblusuario";
+        const sql = "SELECT * FROM public.tbl_usuarios ORDER BY codigo desc ";
         return UsuarioController.ejecutarConsulta(sql, [], res, 'select');
     }
     logIn(req, res) {
@@ -14,18 +14,18 @@ class UsuarioController extends db_manager_1.default {
         const parametros = [];
         const { correo, clave } = req.body;
         parametros.push(correo, clave);
-        const sql = "SELECT usuarioid, nombreusuario, correo, codrol FROM tblusuario WHERE correo = $1 AND clave = $2";
+        const sql = "SELECT * FROM tbl_usuarios WHERE correo = $1 AND clave = $2";
         console.log(parametros);
         return UsuarioController.ejecutarConsulta(sql, parametros, res, 'jwt');
     }
     crearUsuarios(req, res) {
         console.log(req.body);
         const parametros = [];
-        const { nombreusuario, correo, clave, codrol } = req.body;
-        parametros.push(nombreusuario, correo, clave, codrol);
-        const sql = "INSERT into tblusuario (nombreusuario,correo,clave,codrol) VALUES($1,$2,$3,$4) RETURNING codrol , correo, nombreusuario ";
+        const { codigo_rol, nombre_usuario, correo, clave } = req.body;
+        parametros.push(codigo_rol, nombre_usuario, correo, clave);
+        const sql = "INSERT into tbl_usuarios (codigo_rol, nombre_usuario, correo, clave) VALUES($1,$2,$3,$4) RETURNING codigo";
         console.log(parametros);
-        return UsuarioController.ejecutarConsulta(sql, parametros, res, 'jwt');
+        return UsuarioController.ejecutarConsulta(sql, parametros, res, 'insert');
     }
     borrarUsuarios(req, res) {
         if (!isNaN(Number(req.params.usuarioid))) {

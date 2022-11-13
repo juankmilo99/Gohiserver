@@ -4,17 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const encuestaDimController_1 = __importDefault(require("../controllers/encuestaDimController"));
+const encuestasController_1 = __importDefault(require("../controllers/encuestasController"));
 class EncuestaDimRoutes {
     constructor() {
         this.router = (0, express_1.Router)();
         this.config();
     }
     config() {
-        this.router.get('/', encuestaDimController_1.default.obtenerEncuestaDim);
-        this.router.post('/crear', encuestaDimController_1.default.crearEncuestaDim);
-        this.router.delete('/:encuestadimencionid', encuestaDimController_1.default.borrarEncuestaDim);
-        this.router.put('/actualizar/:encuestadimencionid', encuestaDimController_1.default.actualizarEncuestaDim);
+        this.router.get('/', encuestasController_1.default.obtenerEncuestaDim);
+        this.router.post('/crear', encuestasController_1.default.crearEncuestaDim);
+        this.router.delete('/:encuestadimencionid', encuestasController_1.default.borrarEncuestaDim);
+        this.router.put('/actualizar/:encuestadimencionid', encuestasController_1.default.actualizarEncuestaDim);
     }
 }
 const encuestaDimRoutes = new EncuestaDimRoutes();

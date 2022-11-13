@@ -49,6 +49,9 @@ class dbManager {
                                 'id': resultado.rows
                             });
                             break;
+                        case 'insert-multiple':
+                            console.log('bandera');
+                            break;
                         case 'delete':
                             res.status(200).json({
                                 'mensaje': 'Registro eliminado',
@@ -67,9 +70,6 @@ class dbManager {
                             }, 'alvaroelbarbaro');
                             res.status(200).json({
                                 'token': token,
-                                'nombre': resultado.rows[0].nombreusuario,
-                                'id': resultado.rows[0].usuarioid,
-                                'codrol': resultado.rows[0].codrol
                             });
                             break;
                         default:
