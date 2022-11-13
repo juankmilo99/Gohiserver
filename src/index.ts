@@ -4,6 +4,7 @@ import indexRoutes from './routes/indexRoutes';
 import preguntaRoutes from './routes/preguntaRoutes';
 import usuarioRoutes from './routes/usuarioRoutes';
 import cors from "cors";
+import * as dotenv from 'dotenv';
 import respuestaRoutes from './routes/respuestaRoutes';
 import usuarioEncuestaRoutes from './routes/usuarioEncuestaRoutes';
 import procesosRoutes from './routes/procesosRoutes';
@@ -13,14 +14,14 @@ class Server {
     public app: express.Application;
 
     constructor() {
-        
         this.app = express();
+        dotenv.config();
         this.config();
         this.routes();
     }
 
     public config(): void {
-        this.app.set('PORT', process.env.PORT || 8099);
+        this.app.set('PORT', process.env.PORT || 0);
         this.app.use(cors());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));

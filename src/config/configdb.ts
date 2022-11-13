@@ -1,11 +1,12 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 export default {
     database: {
-      dialec:'postgres',
-      host: 'localhost',
-      user: 'Camilo_R',
-      password:'juan1233',
-      database: 'db_encuestas'
-
-        }
+        dialec: process.env.DIALECT,
+        host: process.env.HOST,
+        user: process.env.USER,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE
     }
-    
+}
