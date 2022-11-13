@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import { v4 as uuidv4 } from 'uuid';
 import { transporter } from '../config/mailer';
 import dbManager from '../config/db_manager';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 class ProcesosController extends dbManager {
 
@@ -33,7 +35,7 @@ class ProcesosController extends dbManager {
   }
 
   public agregarCorreos(req: Request, res: Response): Promise<any> {
-    if (!isNaN(Number(req.params.codigo_proceso))) {
+    if (!isNaN(Number(req.params.codigo_proceso))) {      
       const codigo = Number(req.params.codigo_proceso);
       var verificationLink;
       var uuid;
@@ -44,7 +46,7 @@ class ProcesosController extends dbManager {
       correos.forEach(async (infoCorreo: any) => {
         const { correo } = infoCorreo;
         uuid = uuidv4();
-        verificationLink= 'http://localhost:4200/dash/my-surveys/fill/'+uuid;
+        verificationLink= process.env.FRONTLINK +'/public/my-surveys/fill/'+uuid;
         //****************ENVIAR CORREOS************************************************************************************************//
         await transporter.sendMail({
           from: '"GOHI" <punishman99@gmail.com>', // sender address
