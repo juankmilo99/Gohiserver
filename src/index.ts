@@ -10,6 +10,7 @@ import usuarioEncuestaRoutes from './routes/usuarioEncuestaRoutes';
 import procesosRoutes from './routes/procesosRoutes';
 import dimensionesRoutes from './routes/dimensionesRoutes';
 
+
 class Server {
     public app: express.Application;
 

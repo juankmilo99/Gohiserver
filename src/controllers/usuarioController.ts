@@ -28,10 +28,24 @@ class UsuarioController extends dbManager {
     return UsuarioController.ejecutarConsulta(sql,parametros,res,'insert')
   }
 
+  public obtenerEncuestasAsig(req: Request, res: Response): Promise<any> {
+    if (!isNaN(Number(req.params.usuarioid))) {
+      const codigo = Number(req.params.usuarioid);   
+      const sql: string = `SELECT usu.nombre_usuario, encu.nombre FROM tbl_usuarios usu INNER join tbl_encuestas encu ON encu.codigo_usuario = usu.codigo WHERE usu.codigo= $1`;
+      const parametros = [codigo];
+      return UsuarioController.ejecutarConsulta(sql, parametros, res, 'select');
+    } else {
+      return Promise.resolve(res.status(400).json({
+        'mensaje': 'Codigo invalido '
+      }));
+    }
+
+  }
+
   public borrarUsuarios(req: Request, res: Response): Promise<any> {
     if (!isNaN(Number(req.params.usuarioid))) {
       const codigo = Number(req.params.usuarioid);
-      const sql : string = 'DELETE FROM tblusuario WHERE usuarioid = $1';
+      const sql : string = 'DELETE FROM tbl_usuarios WHERE codigo = $1';
       const parametros=[codigo];
       return UsuarioController.ejecutarConsulta(sql, parametros, res, 'delete');
     } else {

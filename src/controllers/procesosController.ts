@@ -1,3 +1,4 @@
+
 import { Request, Response } from 'express'
 import { v4 as uuidv4 } from 'uuid';
 import { transporter } from '../config/mailer';
@@ -11,6 +12,28 @@ class ProcesosController extends dbManager {
     const sql: string = "SELECT * FROM public.tbl_procesos  ORDER BY codigo desc ";
     return ProcesosController.ejecutarConsulta(sql, [], res, 'select');
   }
+
+
+  public obtenerEstadosProcesos(req: Request, res: Response): Promise<any> {
+    const sql = `select 'Encuestas Activas' as "estado",'chart-bar' as "icon", count(*) as value
+    from tbl_encuestas encu
+    INNER join tbl_procesos proc ON proc.codigo_encuesta = encu.codigo
+    WHERE proc.estado = 1
+    UNION
+    select 'Encuestas Inactivas','chart-area', count(*)
+    from tbl_encuestas encu
+    INNER join tbl_procesos proc ON proc.codigo_encuesta = encu.codigo
+    WHERE proc.estado = 2
+    UNION
+    select 'Encuestas Finalizadas','chart-pie', count(*)
+    from tbl_encuestas encu
+    INNER join tbl_procesos proc ON proc.codigo_encuesta = encu.codigo
+    WHERE proc.estado = 3`;
+    return ProcesosController.ejecutarConsulta(sql, [], res, 'select');
+  }
+
+  
+
 
   public crearProcesos(req: Request, res: Response): Promise<any> {
     const parametros = [];
@@ -38,12 +61,13 @@ class ProcesosController extends dbManager {
     if (!isNaN(Number(req.params.codigo_proceso))) {      
       const codigo = Number(req.params.codigo_proceso);
       var verificationLink;
-      var uuid;
+      
       delete req.body.codigo_proceso;
 
       const promises: Array<Promise<any>> = [];
       const correos = req.body;
       correos.forEach(async (infoCorreo: any) => {
+        var uuid;
         const { correo } = infoCorreo;
         uuid = uuidv4();
         verificationLink= process.env.FRONTLINK +'/public/my-surveys/fill/'+uuid;
@@ -64,7 +88,7 @@ class ProcesosController extends dbManager {
         promises.push(ProcesosController.ejecutarConsulta(sql, parametros, res, 'insert-multiple'));
       });
       res.status(200).json({
-        'mensaje': 'Registro creado',
+        'mensaje': 'Registro creado',      
       });
       return Promise.all(promises);
 

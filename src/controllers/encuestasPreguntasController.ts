@@ -7,7 +7,8 @@ class PreguntaController extends dbManager {
     const sql:string = "SELECT * FROM public.tbl_encuestas_preguntas   ORDER BY codigo desc ";
     return PreguntaController.ejecutarConsulta(sql, [], res, 'select');
   }  
-  
+
+  //crear varios insert con una funcion promise
   public crearPreguntas(req: Request, res: Response): Promise<any>{
     let sql: string = '';
     const promises: Array<Promise<any>> = [];
@@ -21,14 +22,16 @@ class PreguntaController extends dbManager {
       promises.push(PreguntaController.ejecutarConsulta(sql,parametros,res,'insert-multiple'));
     });                                
     res.status(200).json({                      
-      'mensaje': 'Registro creado'      
+      'mensaje': 'Registros creados',     
+    
     });                                   
     return Promise.all(promises);
   }
+  
 
   public borrarPregunta(req: Request, res: Response): Promise<any> {
-    if (!isNaN(Number(req.params.codigo_encuesta))) {
-      const codigo = Number(req.params.codigo_encuesta);
+    if (!isNaN(Number(req.params.codigo_pregunta))) {
+      const codigo = Number(req.params.codigo_pregunta);
       const sql : string = 'DELETE FROM tbl_encuestas_preguntas WHERE codigo = $1';
       const parametros=[codigo];
       return PreguntaController.ejecutarConsulta(sql, parametros, res, 'delete');

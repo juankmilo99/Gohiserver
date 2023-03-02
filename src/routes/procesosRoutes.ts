@@ -11,6 +11,7 @@ class ProcesosRoutes {
 
     public config(): void {
         this.router.get('/', procesosController.obtenerProcesos);
+        this.router.get('/estados', procesosController.obtenerEstadosProcesos);
         this.router.post('/crear', procesosController.crearProcesos);
         this.router.post('/correos/:codigo_proceso', procesosController.agregarCorreos);
         this.router.put('/actualizar/:codigo_proceso', procesosController.actualizarEstadoProcesos);

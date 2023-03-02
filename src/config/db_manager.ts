@@ -51,11 +51,11 @@ class dbManager {
               'mensaje': 'Registro actualizado',
               'filas': resultado.rows
             });
-            break;
-          case 'jwt':
+            break;           
+          case 'jwt':                      
             const token = jwt.sign({
               'user': resultado.rows,
-            }, 'alvaroelbarbaro');
+            }, 'secret', { expiresIn: '1h' });
             res.status(200).json({
               'token': token,          
             });

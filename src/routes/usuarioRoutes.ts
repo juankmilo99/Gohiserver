@@ -14,6 +14,7 @@ class UsuarioRoutes {
    this.router.get('/',usuarioController.obtenerUsuarios);
    this.router.post('/crear',usuarioController.crearUsuarios);
    this.router.post('/login',usuarioController.logIn);
+   this.router.get('/encuestas/:usuarioid',usuarioController.obtenerEncuestasAsig);
    this.router.delete('/:usuarioid',usuarioController.borrarUsuarios);
    this.router.put('/actualizar/:usuarioid',usuarioController.actualizarUsuario);
 
