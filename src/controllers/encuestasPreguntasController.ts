@@ -6,7 +6,21 @@ class PreguntaController extends dbManager {
   public obtenerPreguntas(req: Request, res: Response): Promise<any> {
     const sql:string = "SELECT * FROM public.tbl_encuestas_preguntas   ORDER BY codigo desc ";
     return PreguntaController.ejecutarConsulta(sql, [], res, 'select');
-  }  
+  }
+  public obtenerPreguntaRespuestas(req: Request, res: Response): Promise<any> {
+    if (!isNaN(Number(req.params.codigo_pregunta))) {
+      const codigo = Number(req.params.codigo_pregunta);
+      const sql : string = `SELECT count(*) as respuestas 
+      FROM tbl_encuestas_preguntas preg INNER join tbl_respuestas res ON res.codigo_pregunta = preg.codigo 
+      WHERE preg.codigo = $1 `;
+      const parametros=[codigo];
+      return PreguntaController.ejecutarConsulta(sql, parametros, res, 'select');
+    } else {
+      return Promise.resolve(res.status(400).json({
+        'mensaje': 'Codigo invalido'
+      }));
+    }
+  }    
 
   //crear varios insert con una funcion promise
   public crearPreguntas(req: Request, res: Response): Promise<any>{
@@ -43,12 +57,12 @@ class PreguntaController extends dbManager {
 
   }
   public actualizarPregunta(req:Request,res:Response):Promise<any>{
-    if (!isNaN(Number(req.params.preguntaid))) {
-      const codigo = Number(req.params.preguntaid);
-      delete req.body.preguntaid;
-      const {encuestadimencionid,pregunta}=req.body;
-      const sql : string = 'UPDATE tblpregunta SET encuestadimencionid = $1, pregunta = $2 WHERE preguntaid = $3;';
-      const parametros = [encuestadimencionid,pregunta, codigo];
+    if (!isNaN(Number(req.params.codigo_pregunta))) {
+      const codigo_pregunta = Number(req.params.codigo_pregunta);
+      delete req.body.codigo_pregunta;
+      const {pregunta}=req.body;
+      const sql : string = 'UPDATE tbl_encuestas_preguntas SET  pregunta = $1 WHERE codigo= $2;';
+      const parametros = [pregunta, codigo_pregunta];
       return PreguntaController.ejecutarConsulta(sql, parametros, res, 'update');
     }
     return Promise.resolve(res.status(400).json({

@@ -15,7 +15,9 @@ class EncuestasRoutes {
    this.router.post('/uuid/:uuid',encuestasController.obtenerEncuestasUuid);
    this.router.get('/usuariouuid/:uuid',encuestasController.obtenerInfoUsuarioUuid);  
    this.router.get('/opciones',encuestasController.obtenerOpciones);
-   this.router.get('/grafica',encuestasController.obtenerDatosGrafica);
+   this.router.get('/grafica/pie',encuestasController.obtenerDatosGraficaPie);
+   this.router.get('/grafica/pie2',encuestasController.obtenerDatosGraficaPie2);
+   this.router.post('/grafica/:codigo_opcion',encuestasController.obtenerDatosGrafica);
    this.router.post('/diligenciar',encuestasController.diligenciarEncuesta);          
    this.router.post('/crear',encuestasController.crearEncuestas);
    this.router.delete('/:codigo_encuesta',encuestasController.borrarEncuesta);

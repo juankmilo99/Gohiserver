@@ -16,6 +16,7 @@ class UsuarioRoutes {
    this.router.post('/login',usuarioController.logIn);
    this.router.get('/encuestas/:usuarioid',usuarioController.obtenerEncuestasAsig);
    this.router.delete('/:usuarioid',usuarioController.borrarUsuarios);
+   this.router.get('/:codigo_usuario',usuarioController.obtenerUsuariosId);
    this.router.put('/actualizar/:usuarioid',usuarioController.actualizarUsuario);
 
   

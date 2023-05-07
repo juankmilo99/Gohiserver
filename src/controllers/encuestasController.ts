@@ -4,7 +4,7 @@ import dbManager from '../config/db_manager';
 class EncuestasController extends dbManager {
 
   public obtenerEncuestas(req: Request, res: Response): Promise<any> {
-    const sql: string = "SELECT * FROM tbl_encuestas ORDER BY codigo desc  ";
+    const sql: string = "SELECT *,(SELECT count(*) as preguntas FROM tbl_encuestas_preguntas encu WHERE encu.codigo_encuesta = tbl_encuestas.codigo ),(SELECT count(*) as procesos FROM tbl_procesos proc WHERE proc.codigo_encuesta = tbl_encuestas.codigo ) FROM tbl_encuestas ORDER BY codigo desc  ";
     return EncuestasController.ejecutarConsulta(sql, [], res, 'select');
   }
 
@@ -30,7 +30,7 @@ class EncuestasController extends dbManager {
   public obtenerInfoUsuarioUuid(req: Request, res: Response): Promise<any> {
     if (String(req.params.uuid)) {
       const codigo = String(req.params.uuid);
-      const sql = ` SELECT usup.estado,proc.estado as "estado_proceso", usu.nombre_usuario, encu.nombre as "nombre_encuesta", encu.descricpcion as "descripcion_encuesta", proc.nombre as "nombre_proceso", proc.descripcion as "descripcion_proceso", proc.fecha_inicio, proc.fecha_fin
+      const sql = ` SELECT usup.codigo, usup.estado, proc.estado as "estado_proceso", usu.nombre_usuario, encu.nombre as "nombre_encuesta", encu.descricpcion as "descripcion_encuesta", proc.nombre as "nombre_proceso", proc.descripcion as "descripcion_proceso", proc.fecha_inicio, proc.fecha_fin
       FROM tbl_usuarios_procesos usup
       INNER join tbl_procesos proc ON proc.codigo = usup.codigo_proceso
       INNER join tbl_encuestas encu ON encu.codigo = proc.codigo_encuesta 
@@ -50,7 +50,9 @@ class EncuestasController extends dbManager {
     if (!isNaN(Number(req.params.codigo_encuesta))) {
       const codigo = Number(req.params.codigo_encuesta);
       const { codigo_dimension } = req.body;
-      const sql: string = `SELECT preg.codigo as "codigo_pregunta" ,encu.nombre as "encuesta",dim.nombre as "dimencion" , preg.pregunta FROM tbl_encuestas  encu INNER join tbl_encuestas_preguntas preg ON preg.codigo_encuesta = encu.codigo INNER join tbl_dimensiones dim ON dim.codigo = preg.codigo_dimension WHERE encu.codigo = $1 and dim.codigo = $2 ORDER BY encu.codigo desc ; `;
+      const sql: string = `SELECT preg.codigo as "codigo_pregunta" ,encu.nombre as "encuesta",dim.nombre as "dimencion" , preg.pregunta, (SELECT count(*) as respuestas 
+      FROM tbl_respuestas res 
+      WHERE res.codigo_pregunta = preg.codigo)  FROM tbl_encuestas  encu INNER join tbl_encuestas_preguntas preg ON preg.codigo_encuesta = encu.codigo INNER join tbl_dimensiones dim ON dim.codigo = preg.codigo_dimension WHERE encu.codigo = $1 and dim.codigo = $2 ORDER BY encu.codigo desc ; `;
       const parametros = [codigo, codigo_dimension];
       return EncuestasController.ejecutarConsulta(sql, parametros, res, 'select');
 
@@ -63,6 +65,26 @@ class EncuestasController extends dbManager {
   }
 
   public obtenerDatosGrafica(req: Request, res: Response): Promise<any> {
+    if (!isNaN(Number(req.params.codigo_opcion))) {
+      const codigo = Number(req.params.codigo_opcion);
+      const { codigo_proceso } = req.body;
+    const sql = `select dim.nombre,(SELECT count(*) as respuestas FROM tbl_respuestas res
+    INNER join tbl_encuestas_preguntas preg ON preg.codigo = res.codigo_pregunta 
+    INNER join tbl_usuarios_procesos proc ON proc.codigo = res.codigo_usuario_proceso
+    WHERE preg.codigo_dimension=dim.codigo and res.codigo_opcion= $1 and proc.codigo_proceso= $2)
+    from tbl_dimensiones dim`;
+    const parametros = [codigo, codigo_proceso];
+    return EncuestasController.ejecutarConsulta(sql, parametros, res, 'select');
+    
+  } else {
+    return Promise.resolve(res.status(400).json({
+      'mensaje': 'Codigo invalido '
+    }));
+  }
+
+  }
+
+  public obtenerDatosGraficaPie(req: Request, res: Response): Promise<any> {
     const sql = `select 'muy satisfecho' as "respuesta", count(*) as value
     from tbl_respuestas res
     INNER join tbl_opciones op ON op.codigo = res.codigo_opcion
@@ -87,6 +109,16 @@ class EncuestasController extends dbManager {
     from tbl_respuestas res
     INNER join tbl_opciones op ON op.codigo = res.codigo_opcion
     WHERE res.codigo_opcion= 1`;
+    return EncuestasController.ejecutarConsulta(sql, [], res, 'select');
+  }
+
+
+  public obtenerDatosGraficaPie2(req: Request, res: Response): Promise<any> {
+    const sql = `select proc.nombre, count(*) as respuestas
+    from tbl_respuestas res
+    INNER join tbl_usuarios_procesos usu ON usu.codigo = res.codigo_usuario_proceso
+	INNER join tbl_procesos proc ON proc.codigo = usu.codigo_proceso
+    GROUP by proc.nombre`;
     return EncuestasController.ejecutarConsulta(sql, [], res, 'select');
   }
 

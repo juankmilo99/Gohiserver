@@ -4,9 +4,21 @@ import dbManager from '../config/db_manager';
 class UsuarioController extends dbManager {
 
   public obtenerUsuarios(req: Request, res: Response): Promise<any> {
-    const sql:string = "SELECT * FROM public.tbl_usuarios ORDER BY codigo desc ";
+    const sql:string = "SELECT *,(SELECT count(*) as procesos FROM tbl_procesos proc  WHERE proc.codigo_usuario = tbl_usuarios.codigo) FROM public.tbl_usuarios ORDER BY codigo desc ";
     return UsuarioController.ejecutarConsulta(sql, [], res, 'select');
   }
+
+  public obtenerUsuariosId(req: Request, res: Response): Promise<any> {
+    if (!isNaN(Number(req.params.codigo_usuario))) {
+      const codigo = Number(req.params.codigo_usuario);
+    const sql: string = "SELECT * FROM public.tbl_usuarios where codigo = $1 ORDER BY codigo desc ";
+    const parametros = [codigo];
+    return UsuarioController.ejecutarConsulta(sql, parametros, res, 'select');
+    }else {
+      return Promise.resolve(res.status(400).json({
+        'mensaje': 'Codigo invalido'
+      }));
+  }}
 
   public logIn(req: Request, res: Response): Promise<any> {
     console.log(req.body);
@@ -59,9 +71,9 @@ class UsuarioController extends dbManager {
     if (!isNaN(Number(req.params.usuarioid))) {
       const codigo = Number(req.params.usuarioid);
       delete req.body.usuarioid;
-      const {nombreusuario,correo,clave,codrol}=req.body;
-      const sql : string = 'UPDATE tblusuario SET nombreusuario = $1, correo = $2, clave = $3, codrol = $4 WHERE usuarioid = $5;';
-      const parametros = [nombreusuario,correo,clave,codrol,codigo];
+      const {nombre_usuario,correo,clave,codigo_rol}=req.body;
+      const sql : string = 'UPDATE tbl_usuarios SET nombre_usuario = $1, correo = $2, clave = $3, codigo_rol = $4 WHERE codigo = $5;';
+      const parametros = [nombre_usuario,correo,clave,codigo_rol,codigo];
       return UsuarioController.ejecutarConsulta(sql, parametros, res, 'update');
     }
     return Promise.resolve(res.status(400).json({

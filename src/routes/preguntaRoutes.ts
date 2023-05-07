@@ -15,7 +15,8 @@ class PreguntaRoutes {
    this.router.post('/crear',preguntaController.crearPreguntas);
    this.router.post('/crearv2',preguntaController.crearPreguntas);
    this.router.delete('/:codigo_pregunta',preguntaController.borrarPregunta);
-   this.router.put('/actualizar/:preguntaid',preguntaController.actualizarPregunta);
+   this.router.get('/respuestas/:codigo_pregunta',preguntaController.obtenerPreguntaRespuestas);
+   this.router.put('/actualizar/:codigo_pregunta',preguntaController.actualizarPregunta);
 
   
   }
