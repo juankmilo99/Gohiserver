@@ -15,7 +15,7 @@ class ProcesosController extends dbManager {
   public obtenerProcesosId(req: Request, res: Response): Promise<any> {
     if (!isNaN(Number(req.params.codigo_proceso))) {
       const codigo = Number(req.params.codigo_proceso);
-    const sql: string = "SELECT *,TO_CHAR(fecha_fin, 'YYYY-MM-DD HH24:MI:SS') as fecha_fin, TO_CHAR(fecha_inicio, 'YYYY-MM-DD HH24:MI:SS') as fecha_inicio FROM public.tbl_procesos where codigo = $1 ORDER BY codigo desc ";
+    const sql: string = "SELECT proc.codigo,proc.descripcion,proc.estado,proc.nombre,proc.codigo_encuesta,proc.codigo_usuario,TO_CHAR(fecha_fin, 'YYYY-MM-DD HH24:MI:SS') as fecha_fin, TO_CHAR(fecha_inicio, 'YYYY-MM-DD HH24:MI:SS') as fecha_inicio, encu.nombre as nombre_encuesta FROM public.tbl_procesos proc inner join public.tbl_encuestas encu ON encu.codigo = proc.codigo_encuesta where proc.codigo = $1 ORDER BY proc.codigo desc  ";
     const parametros = [codigo];
     return ProcesosController.ejecutarConsulta(sql, parametros, res, 'select');
     }else {
